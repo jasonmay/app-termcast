@@ -7,7 +7,7 @@ use IO::Pty::Easy;
 BEGIN {
     eval "use Test::TCP;";
     plan skip_all => "Test::TCP is required for this test" if $@;
-    plan tests => 3;
+    plan tests => 4;
 }
 
 test_tcp(
@@ -34,6 +34,9 @@ EOF
         my $login;
         $client->recv($login, 4096);
         is($login, "hello test tset\n", 'got the correct login info');
+        my $metadata;
+        $client->recv($metadata, 4096);
+        ok($metadata, 'metadata successfully sent');
         my $output;
         $client->recv($output, 4096);
         is($output, "foo", 'sent the right data to the server');
