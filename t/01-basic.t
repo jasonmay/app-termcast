@@ -7,7 +7,7 @@ use IO::Pty::Easy;
 BEGIN {
     eval "use Test::TCP;";
     plan skip_all => "Test::TCP is required for this test" if $@;
-    plan tests => 4;
+    plan tests => 3;
 }
 
 test_tcp(
@@ -33,10 +33,8 @@ EOF
         my $client = $sock->accept;
         my $login;
         $client->recv($login, 4096);
-        is($login, "hello test tset\n", 'got the correct login info');
-        my $metadata;
-        $client->recv($metadata, 4096);
-        ok($metadata, 'metadata successfully sent');
+        my $auth_regexp = qr/^hello test tset\n\e\[H\x00.+?\xff\e\[H\e\[2J/;
+        like($login, $auth_regexp, 'got the correct login info');
         my $output;
         $client->recv($output, 4096);
         is($output, "foo", 'sent the right data to the server');
