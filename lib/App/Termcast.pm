@@ -166,13 +166,8 @@ sub _build_socket {
         geometry => [ $cols, $lines ],
     );
 
-    $socket->syswrite($self->establishment_message);
-    select undef, undef, undef, 0.1; # XXX yuck :)
-                                     # this is going away once I move
-                                     # auth to on_data in ::Server
-                                     # instead of on_connect or whatever
-                                     #         - jasonmay
-    $socket->syswrite($resize_string);
+    $socket->syswrite($self->establishment_message . $resize_string);
+
     return $socket;
 }
 
